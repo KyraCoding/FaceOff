@@ -10,14 +10,29 @@
       Join!
     </button>
     <p id="location">Loading... Move around a bit...</p>
+    <p id="partner_location">
+      Waiting...
+    </p>
     <script>
       const socket = new WebSocket("wss://face-off.glitch.me/");
 
       socket.onopen = function (event) {
         console.log("Connected to the WebSocket server");
       };
+      socket.onmessage(function(msg) {
+        msg = JSON.parse(msg);
+        
+        if (msg.position) {
+          document.getElementById(`Partner heading: ${msg.position.heading}`)
+        }
+      })
       
-      document.getElementById("")
+      
+      
+      document.getElementById("join").addEventListener("click", function() {
+        socket.send(JSON.stringify({room: document.getElementById("room_id").value}))
+        document.getElementById("room_id").value = "";
+      })
       const is_ios =
         navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
         navigator.userAgent.match(/AppleWebKit/);
@@ -44,7 +59,8 @@
         if (event.alpha !== null) {
           var absolute_direction =
             event.webkitCompassHeading || Math.abs(event.alpha - 360);
-          document.getElementById("location").innerHTML = absolute_direction;
+          document.getElementById(`Your heading: ${absolute_direction}`)
+          socket.send(JSON.stringify({position: {heading: absolute_direction}}))
         }
       }
     </script>
