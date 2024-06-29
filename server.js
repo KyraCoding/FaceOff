@@ -35,8 +35,6 @@ wss.on("connection", function (socket, request, pathname) {
         console.log(`New user added to room \"${msg.room}\"`)
         socket.send(JSON.stringify({success: true}))
       } else {
-        console.log(socket.room)
-        console.log(rooms.get(msg.room).size)
         socket.send(JSON.stringify({success: false}))
       }
       
@@ -51,7 +49,9 @@ wss.on("connection", function (socket, request, pathname) {
         
         if (room.size == 2) {
           // :3
-          var partner = Array.from(room.entries())[(Array.from(room.entries()).indexOf(user)+1)%2]
+          var partner = Array.from(room.keys())[(Array.from(room.keys()).indexOf(socket)+1)%2]
+          
+          partner.send(JSON.stringify({position: user.position}))
         }
       }
     }
