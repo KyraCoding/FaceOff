@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <title>FaceOff</title>
+  </head>
+  <body>
+    <p id="direction">move your device around</p>
+    <script>
+      function track(pos) {
+        
+        document.getElementById("direction").innerHTML = pos.coords.heading
+        alert(pos.coords.heading)
+      }
+      navigator.geolocation.getCurrentPosition(track)
+      navigator.geolocation.watchPosition(track);
+      
+    </script>
+  </body>
+</html>
