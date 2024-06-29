@@ -3,15 +3,24 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FaceOff</title>
+    
   </head>
   <body>
     <p id="location">Loading... Move around a bit...</p>
-
+    <script
+      src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+      integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+      crossorigin="anonymous"
+    ></script>
     <script>
-      const is_ios = 
+      const socket = io();
+      socket.on("connect", () => {
+        console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+      });
+      const is_ios =
         navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
         navigator.userAgent.match(/AppleWebKit/);
-      
+
       if (is_ios) {
         DeviceOrientationEvent.requestPermission()
           .then((response) => {
@@ -32,7 +41,8 @@
       }
       function direction(event) {
         if (event.alpha !== null) {
-          var absolute_direction = event.webkitCompassHeading || Math.abs(event.alpha - 360);
+          var absolute_direction =
+            event.webkitCompassHeading || Math.abs(event.alpha - 360);
           document.getElementById("location").innerHTML = absolute_direction;
         }
       }
