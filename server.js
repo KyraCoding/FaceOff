@@ -13,6 +13,37 @@ const wss = new WebSocket.Server({ server });
 
 var rooms = new Map();
 
+// Radians to Degrees
+function toDegrees (angle) {
+  return angle * (180 / Math.PI);
+}
+
+// Degrees to Radians
+function toRadians (angle) {
+  return angle * Math.PI/180
+}
+// Caclulate bearing
+function calculateBearing(lat1, long1, lat2, long2) {
+    var lat1 = toRadians(lat1)
+    var long1 = toRadians(long1)
+    var lat2 = toRadians(lat2)
+    var long2 = toRadians(long2)
+    
+    var dLon = (long2 - long1);
+
+    var y = Math.sin(dLon) * Math.cos(lat2);
+    var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1)
+            * Math.cos(lat2) * Math.cos(dLon);
+
+    var brng = Math.atan2(y, x);
+
+    brng = toDegrees(brng);
+    brng = (brng + 360) % 360;
+
+    return brng;
+}
+
+
 wss.on("connection", function (socket, request, pathname) {
   console.log("New socket!");
   socket.on("message", function (msg) {
@@ -47,11 +78,17 @@ wss.on("connection", function (socket, request, pathname) {
 
         if (room.size == 2) {
           // :3
-          var partner = Array.from(room.keys())[
+          var partner_socket = Array.from(room.keys())[
             (Array.from(room.keys()).indexOf(socket) + 1) % 2
           ];
-
-          partner.send(JSON.stringify({ position: user.position }));
+          var partner = room.get(partner_socket)
+          
+          console.log(partner)
+          if (!!(user.position?.latitude) && !!(user.position?.longitude) && !!(partner.position?.latitude) && !!(partner.position?.longitude)) {
+            console.log("sending bearing")
+            partner_socket.send(JSON.stringify({ position: user.position, bearing: calculateBearing(partner.position.latitude, partner.position.longitude, user.position.latitude, user.position.longitude) }));
+          }
+          
         }
       }
     }
