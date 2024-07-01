@@ -13,7 +13,6 @@
     <button id="join">Join!</button>
     <p id="location">Loading... Move around a bit...</p>
     <p id="bearing"></p>
-    <p id="partner_location">Waiting...</p>
     <button id="ios_enable" style="display: none">
       Hey, you're on an iOS device! We need you to click this button cuz safari
       is stupid
@@ -25,19 +24,7 @@
         socket.onopen = function (event) {
           console.log("Connected to the WebSocket server");
         };
-        socket.onmessage = function (msg) {
-          msg = JSON.parse(msg.data);
-          if (msg.position) {
-            document.getElementById(
-              "partner_location"
-            ).innerHTML = `Partner heading: ${msg.position.heading} <br>Partner latitude: ${msg.position.latitude}<br>Partner longitude: ${msg.position.longitude}`;
-          }
-          if (msg.bearing) {
-            document.getElementById(
-              "bearing"
-            ).innerHTML = `Bearing: ${msg.bearing}`;
-          }
-        };
+        
 
         document.getElementById("join").addEventListener("click", function () {
           socket.send(
@@ -128,7 +115,14 @@
             })
           );
         }
-
+        socket.onmessage = function (msg) {
+          msg = JSON.parse(msg.data);
+          if (msg.bearing) {
+            document.getElementById(
+              "bearing"
+            ).innerHTML = `Bearing: ${(msg.bearing-heading +360)%360}`;
+          }
+        };
         function error(err) {
           console.log(err);
         }

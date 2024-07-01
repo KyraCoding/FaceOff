@@ -86,7 +86,7 @@ wss.on("connection", function (socket, request, pathname) {
           console.log(partner)
           if (!!(user.position?.latitude) && !!(user.position?.longitude) && !!(partner.position?.latitude) && !!(partner.position?.longitude)) {
             console.log("sending bearing")
-            partner_socket.send(JSON.stringify({ position: user.position, bearing: calculateBearing(partner.position.latitude, partner.position.longitude, user.position.latitude, user.position.longitude) }));
+            partner_socket.send(JSON.stringify({bearing: calculateBearing(partner.position.latitude, partner.position.longitude, user.position.latitude, user.position.longitude) }));
           }
           
         }
