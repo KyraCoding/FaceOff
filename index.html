@@ -12,94 +12,130 @@
     />
     <button id="join">Join!</button>
     <p id="location">Loading... Move around a bit...</p>
-
+    <p id="bearing"></p>
     <p id="partner_location">Waiting...</p>
+    <button id="ios_enable" style="display: none">
+      Hey, you're on an iOS device! We need you to click this button cuz safari
+      is stupid
+    </button>
     <script>
       const socket = new WebSocket("wss://face-off.glitch.me/");
 
-      socket.onopen = function (event) {
-        console.log("Connected to the WebSocket server");
-      };
-      socket.onmessage = function (msg) {
-        msg = JSON.parse(msg.data);
-        if (msg.position) {
-          document.getElementById(
-            "partner_location"
-          ).innerHTML = `Partner heading: ${msg.position.heading} <br>Partner latitude: ${msg.position.latitude}<br>Partner longitude: ${msg.position.longitude}`;
-        }
-      };
+      socket.addEventListener("open", (event) => {
+        socket.onopen = function (event) {
+          console.log("Connected to the WebSocket server");
+        };
+        socket.onmessage = function (msg) {
+          msg = JSON.parse(msg.data);
+          if (msg.position) {
+            document.getElementById(
+              "partner_location"
+            ).innerHTML = `Partner heading: ${msg.position.heading} <br>Partner latitude: ${msg.position.latitude}<br>Partner longitude: ${msg.position.longitude}`;
+          }
+          if (msg.bearing) {
+            document.getElementById(
+              "bearing"
+            ).innerHTML = `Bearing: ${msg.bearing}`;
+          }
+        };
 
-      document.getElementById("join").addEventListener("click", function () {
-        socket.send(
-          JSON.stringify({ room: document.getElementById("room_id").value })
-        );
-        document.getElementById("room_id").value = "";
-      });
-      function iOS() {
-  return [
-    'iPad Simulator',
-    'iPhone Simulator',
-    'iPod Simulator',
-    'iPad',
-    'iPhone',
-    'iPod'
-  ].includes(navigator.platform)
-  // iPad on iOS 13 detection
-  || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
-}
-
-      if (iOS()) {
-        DeviceOrientationEvent.requestPermission()
-          .then((response) => {
-            if (response === "granted") {
-              window.addEventListener("deviceorientation", direction, true);
-            } else {
-              document.getElementById("location").innerHTML =
-                "Hey, you didn't give me permission :<";
-            }
-          })
-          .catch(
-            () =>
-              (document.getElementById("location").innerHTML =
-                "Your device sucks lmao")
+        document.getElementById("join").addEventListener("click", function () {
+          socket.send(
+            JSON.stringify({ room: document.getElementById("room_id").value })
           );
-      } else {
-        window.addEventListener("deviceorientation", direction, true);
-      }
+          document.getElementById("room_id").value = "";
+        });
+        function iOS() {
+          return (
+            [
+              "iPad Simulator",
+              "iPhone Simulator",
+              "iPod Simulator",
+              "iPad",
+              "iPhone",
+              "iPod",
+            ].includes(navigator.platform) ||
+            // iPad on iOS 13 detection
+            (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+          );
+        }
 
-      const options = {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0,
-      };
-            navigator.geolocation.getCurrentPosition(coordinates, error, options);
-      navigator.geolocation.watchPosition(coordinates, error, options);
-      
-      var heading;
-      var latitude;
-      var longitude;
-      function direction(event) {
-        if (event.alpha !== null) {
-          heading =
-            event.webkitCompassHeading || Math.abs(event.alpha - 360);
+        if (iOS()) {
+          var ios_enable = document.getElementById("ios_enable");
+          ios_enable.style = "display:initial";
+          ios_enable.addEventListener("click", function () {
+            DeviceOrientationEvent.requestPermission()
+              .then((response) => {
+                ios_enable.style = "display:none";
+                if (response === "granted") {
+                  window.addEventListener("deviceorientation", direction, true);
+                } else {
+                  document.getElementById("location").innerHTML =
+                    "Hey, you didn't give me permission :<";
+                }
+              })
+              .catch(
+                () =>
+                  (document.getElementById("location").innerHTML =
+                    "Your device sucks lmao")
+              );
+          });
+        } else {
+          window.addEventListener("deviceorientation", direction, true);
+        }
+
+        const options = {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        };
+        navigator.geolocation.getCurrentPosition(coordinates, error, options);
+        navigator.geolocation.watchPosition(coordinates, error, options);
+
+        var heading;
+        var latitude;
+        var longitude;
+        function direction(event) {
+          if (event.alpha !== null) {
+            heading = event.webkitCompassHeading || Math.abs(event.alpha - 360);
+            document.getElementById(
+              "location"
+            ).innerHTML = `Your heading: ${heading} <br>Your latitude: ${latitude}<br>Your longitude: ${longitude}`;
+            socket.send(
+              JSON.stringify({
+                position: {
+                  heading: heading,
+                  latitude: latitude,
+                  longitude: longitude,
+                },
+              })
+            );
+          }
+        }
+        function coordinates(event) {
+          latitude = event.coords.latitude;
+          longitude = event.coords.longitude;
           document.getElementById(
             "location"
           ).innerHTML = `Your heading: ${heading} <br>Your latitude: ${latitude}<br>Your longitude: ${longitude}`;
-          socket.send(JSON.stringify({ position: { heading: heading, latitude: latitude, longitude: longitude} }));
+          socket.send(
+            JSON.stringify({
+              position: {
+                heading: heading,
+                latitude: latitude,
+                longitude: longitude,
+              },
+            })
+          );
         }
-      }
-      function coordinates(event) {
-        latitude = event.coords.latitude
-        longitude = event.coords.longitude
-        document.getElementById(
-            "location"
-          ).innerHTML = `Your heading: ${heading} <br>Your latitude: ${latitude}<br>Your longitude: ${longitude}`;
-        socket.send(JSON.stringify({ position: { heading: heading, latitude: latitude, longitude: longitude } }));
-      }
-      
-      function error(err) {
-        console.log(err)
-      }
+
+        function error(err) {
+          console.log(err);
+        }
+      });
+      socket.addEventListener("close", (event) => {
+        alert("Socket connection closed!");
+      });
     </script>
   </body>
 </html>
