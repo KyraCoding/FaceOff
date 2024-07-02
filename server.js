@@ -83,9 +83,7 @@ wss.on("connection", function (socket, request, pathname) {
           ];
           var partner = room.get(partner_socket)
           
-          console.log(partner)
           if (!!(user.position?.latitude) && !!(user.position?.longitude) && !!(partner.position?.latitude) && !!(partner.position?.longitude)) {
-            console.log("sending bearing")
             partner_socket.send(JSON.stringify({bearing: calculateBearing(partner.position.latitude, partner.position.longitude, user.position.latitude, user.position.longitude) }));
           }
           
