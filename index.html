@@ -3,20 +3,66 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FaceOff</title>
-  </head>
-  <body>
-    <input
-      id="room_id"
-      type="text"
-      placeholder="enter a room id to create on/join"
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
     />
-    <button id="join">Join!</button>
-    <p id="location">Loading... Move around a bit...</p>
-    <p id="bearing"></p>
-    <button id="ios_enable" style="display: none">
-      Hey, you're on an iOS device! We need you to click this button cuz safari
-      is stupid
-    </button>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              inter: ['"inter"', "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="font-inter">
+    <div class="hidden">
+      <input
+        id="room_id"
+        type="text"
+        placeholder="enter a room id to create on/join"
+      />
+      <button id="join">Join!</button>
+      <p id="location">Loading... Move around a bit...</p>
+      <p id="bearing"></p>
+      <button id="ios_enable" style="display: none">
+        Hey, you're on an iOS device! We need you to click this button cuz
+        safari is stupid
+      </button>
+    </div>
+    <div class="flex flex-col h-dvh">
+      
+      <!-- Name -->
+      <div class="flex h-1/6 w-full justify-center">
+        <h1 class="text-slate-800 text-center place-self-center text-6xl	font-bold	">
+          FaceOff
+        </h1>
+      </div>
+      
+      <!-- Main menu -->
+      <div class="flex flex-col h-2/3 w-full bg-slate-800/25">
+        <!-- Instructions -->
+        <div class="flex h-1/4 w-full justify-center">
+          <h1 class="text-slate-800 text-center text-1xl font-medium">
+            Ent
+          </h1>
+        </div>
+      </div>
+      
+      <!-- Credits -->
+      <div class="flex h-1/6 w-full justify-center">
+        <h1 class="text-slate-800 text-center place-self-center text-4xl	font-bold	">
+          From Kyra With Love &lt;3
+        </h1>
+      </div>
+    </div>
     <script>
       const socket = new WebSocket("wss://face-off.glitch.me/");
 
@@ -24,7 +70,6 @@
         socket.onopen = function (event) {
           console.log("Connected to the WebSocket server");
         };
-        
 
         document.getElementById("join").addEventListener("click", function () {
           socket.send(
@@ -82,6 +127,7 @@
         var heading;
         var latitude;
         var longitude;
+        var bearing;
         function direction(event) {
           if (event.alpha !== null) {
             heading = event.webkitCompassHeading || Math.abs(event.alpha - 360);
@@ -97,6 +143,9 @@
                 },
               })
             );
+            document.getElementById("bearing").innerHTML = `Bearing: ${
+              (bearing - heading + 360) % 360
+            }`;
           }
         }
         function coordinates(event) {
@@ -118,9 +167,7 @@
         socket.onmessage = function (msg) {
           msg = JSON.parse(msg.data);
           if (msg.bearing) {
-            document.getElementById(
-              "bearing"
-            ).innerHTML = `Bearing: ${(msg.bearing-heading +360)%360}`;
+            bearing = msg.bearing;
           }
         };
         function error(err) {
