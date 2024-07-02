@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FaceOff</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=aspect-ratio"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -37,7 +38,9 @@
         safari is stupid
       </button>
     </div>
-    <div class="flex flex-col h-dvh bg-[url('https://cdn.glitch.global/da55ffba-491b-4656-86d2-8e7c2f4e1ba2/diamond-sunset.svg?v=1719909357838')]">
+    <div
+      class="flex flex-col h-dvh bg-[url('https://cdn.glitch.global/da55ffba-491b-4656-86d2-8e7c2f4e1ba2/diamond-sunset%20(1).svg?v=1719909882027')]"
+    >
       <!-- Name -->
       <div class="flex h-1/6 w-full justify-center">
         <h1
@@ -50,43 +53,60 @@
       <!-- Main menu -->
       <div class="flex flex-col h-2/3 w-full bg-slate-200/25 justify-center">
         <!-- Code and stuff  -->
-        <div class="flex flex-col h-1/3 w-full justify-center">
+        <div class="flex flex-col h-1/2 w-full justify-center gap-3">
           <!-- Code -->
-          <div class="flex grid grid-cols-4 h-1/2 w-fill gap-3 mx-3">
+          <div class="flex grid grid-cols-4 h-1/2 w-fill mx-3 gap-3 place-items-center	">
             <input
               type="text"
               maxlength="1"
               pattern="[a-zA-Z0-9]"
-              class="h-full w-full text-7xl text-center rounded-lg font-bold uppercase"
+              class="w-full aspect-square text-7xl text-center rounded-lg font-bold uppercase bg-slate-200/50 text-slate-800"
               oninput="this.nextElementSibling.focus()"
+              data-btn="0"
             />
             <input
               type="text"
               maxlength="1"
               pattern="[a-zA-Z0-9]"
-              class="h-full w-full text-7xl text-center rounded-lg font-bold uppercase"
+              class="w-full aspect-square text-7xl text-center rounded-lg font-bold uppercase bg-slate-200/50 text-slate-800"
               oninput="this.nextElementSibling.focus()"
-            />
-
-            <input
-              type="text"
-              maxlength="1"
-              pattern="[a-zA-Z0-9]"
-              class="h-full w-full text-7xl text-center rounded-lg font-bold uppercase" 
-              oninput="this.nextElementSibling.focus()"
+              data-btn="1"
             />
 
             <input
               type="text"
               maxlength="1"
               pattern="[a-zA-Z0-9]"
-              class="h-full w-full text-7xl text-center rounded-lg font-bold uppercase"
-              oninput="document.getElementById('id_submit').focus()"
+              class="w-full aspect-square text-7xl text-center rounded-lg font-bold uppercase bg-slate-200/50 text-slate-800"
+              oninput="this.nextElementSibling.focus()"
+              data-btn="2"
+            />
+
+            <input
+              type="text"
+              maxlength="1"
+              pattern="[a-zA-Z0-9]"
+              class="w-full aspect-square text-7xl text-center rounded-lg font-bold uppercase bg-slate-200/50 text-slate-800"
+              oninput="document.getElementById('random_id').focus()"
+              data-btn="3"
             />
           </div>
-          <div class="flex h-1/2 w-full">
-            <button id="id_submit">
-              click me
+          <div
+            class="h-1/2 w-full flex flex-row gap-3 px-3 self-center align-center"
+          >
+            <button
+              id="clear_id"
+              class="w-1/2 h-full bg-slate-200/25 rounded-lg text-3xl font-medium p-3 hover:bg-slate-200/50 transition ease-in-out duration-300"
+              onclick="clearid()"
+            >
+              Clear
+            </button>
+            <button
+              id="random_id"
+              class="w-1/2 h-full bg-slate-200/25 rounded-lg text-3xl font-medium p-3 hover:bg-slate-200/50 transition ease-in-out duration-300"
+              onclick="createRoom()"
+            >
+              Create Room
             </button>
           </div>
         </div>
@@ -102,8 +122,23 @@
       </div>
     </div>
     <script>
+      function clearid() {
+        var forms = document.querySelectorAll("[data-btn]")
+        for (let i=0;i<forms.length;i++) {
+          forms[i].value = ""
+        }
+      }
+      function createRoom() {
+        const letters = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890"
+        var forms = document.querySelectorAll("[data-btn]")
+        for (let i=0;i<forms.length;i++) {
+          forms[i].value = letters[Math.floor(Math.random()*letters.length)]
+        }
+      }
+      
       const socket = new WebSocket("wss://face-off.glitch.me/");
 
+      
       socket.addEventListener("open", (event) => {
         socket.onopen = function (event) {
           console.log("Connected to the WebSocket server");
