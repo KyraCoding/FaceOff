@@ -24,23 +24,10 @@
     </script>
   </head>
   <body class="font-inter">
-    <div class="hidden">
-      <input
-        id="room_id"
-        type="text"
-        placeholder="enter a room id to create on/join"
-      />
-      <button id="join">Join!</button>
-      <p id="location">Loading... Move around a bit...</p>
-      <p id="bearing"></p>
-      <button id="ios_enable" style="display: none">
-        Hey, you're on an iOS device! We need you to click this button cuz
-        safari is stupid
-      </button>
-    </div>
     <div
       class="flex flex-col h-dvh bg-[url('https://cdn.glitch.global/da55ffba-491b-4656-86d2-8e7c2f4e1ba2/diamond-sunset%20(1).svg?v=1719909882027')]"
     >
+      <p id="location" class="hidden"></p>
       <!-- Name -->
       <div class="flex h-1/6 w-full justify-center">
         <h1
@@ -51,12 +38,25 @@
       </div>
 
       <!-- Main menu -->
-      <div class="flex flex-col h-2/3 w-full bg-slate-200/25 justify-center">
+      <div
+        class="flex flex-col h-2/3 w-full bg-slate-200/25 justify-center gap-3 "
+      >
+        <!-- Error modal -->
+        <div class="flex h-1/4 w-full justify-center p-3 ">
+          <div class="flex h-full w-full rounded-lg bg-red-200/50 hidden justify-center items-center" id="error_div">
+            <p
+              class="text-2xl font-medium p-3 text-center"
+              id="error_text"
+            >
+              
+            </p>
+          </div>
+        </div>
         <!-- Code and stuff  -->
-        <div class="flex flex-col h-1/2 w-full justify-center gap-3">
+        <div class="flex flex-col h-1/2 w-full justify-center gap-3 " id="code_div">
           <!-- Code -->
           <div
-            class="flex grid grid-cols-4 h-1/2 w-fill mx-3 gap-3 place-items-center"
+            class="flex grid grid-cols-4 h-fit w-fill mx-3 gap-3 place-items-center"
           >
             <input
               type="text"
@@ -94,18 +94,33 @@
           >
             <button
               id="clear_id"
-              class="w-1/2 h-full bg-slate-200/25 rounded-lg text-3xl font-medium p-3 hover:bg-slate-200/50 transition ease-in-out duration-300"
+              class="w-1/2 h-full bg-slate-200/50 rounded-lg text-3xl font-medium p-3"
               onclick="clearid()"
             >
               Clear
             </button>
             <button
               id="submit_id"
-              class="w-1/2 h-full bg-slate-200/25 rounded-lg text-3xl font-medium p-3 hover:bg-slate-200/50 transition ease-in-out duration-300"
+              class="w-1/2 h-full bg-slate-200/50 rounded-lg text-3xl font-medium p-3"
               onclick="createRoom()"
             >
               Create Room
             </button>
+          </div>
+        </div>
+
+        <!-- Enable ios -->
+        <div class="flex h-1/4 w-full justify-center p-3">
+          <div
+            class="flex h-full w-full rounded-lg bg-red-200/50 hidden justify-center items-center"
+            id="ios_enable"
+          >
+            <p
+              class="text-2xl font-medium p-3 text-center"
+              id="ios_enable_text"
+            >
+              Please click this to give us location permissions
+            </p>
           </div>
         </div>
       </div>
@@ -132,30 +147,32 @@
         for (let i = 0; i < forms.length; i++) {
           forms[i].value = "";
         }
+        document.getElementById("submit_id").innerHTML = "Create Room";
+        document.getElementById("submit_id").disabled = false;
+        document
+          .getElementById("submit_id")
+          .classList.remove("bg-slate-800/25");
       }
       function createRoom() {
-        const letters = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
-        var forms = document.querySelectorAll("[data-btn]");
-        for (let i = 0; i < forms.length; i++) {
-          forms[i].value = letters[Math.floor(Math.random() * letters.length)];
+        const elements = document.querySelectorAll("[data-btn]");
+        var code = "";
+
+        elements.forEach((element) => {
+          code += element.value;
+        });
+        if (code.length == 4) {
+          socket.send(JSON.stringify({ room: code }));
+        } else if (code.length == 0) {
+          const letters = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+          code = "";
+          for (let i = 0; i < 4; i++) {
+            code += letters[Math.floor(Math.random() * letters.length)];
+          }
+          socket.send(JSON.stringify({ room: code }));
         }
-        alert("yay");
       }
 
       document.querySelectorAll("[data-btn]").forEach((element) => {
-        element.addEventListener("input", function () {
-          const forms = document.querySelectorAll("[data-btn]");
-          const code = Array.from(forms)
-            .map((element) => element.value)
-            .join("");
-          if (code.length == 4) {
-            document.getElementById("submit_id").innerHTML = "Join Room";
-            document.getElementById("submit_id").disabled = false;
-          } else if (code.length > 0) {
-            document.getElementById("submit_id").innerHTML = "Join Room";
-            document.getElementById("submit_id").disabled = true;
-          }
-        });
         element.addEventListener("keydown", function (event) {
           if (
             event.keyCode === 46 ||
@@ -167,28 +184,47 @@
             element.value = "";
             element.previousElementSibling &&
               element.previousElementSibling.focus();
-
-            const elements = document.querySelectorAll("[data-btn]");
-            var code = "";
-
-            elements.forEach((element) => {
-              code += element.value;
-            });
-            console.log(code);
-            if (code.length == 0) {
-              document.getElementById("submit_id").innerHTML = "Create Room";
-              document.getElementById("submit_id").disabled = false;
-            } else {
-              document.getElementById("submit_id").innerHTML = "Join Room";
-              document.getElementById("submit_id").disabled = true;
-            }
           } else if (event.keyCode === 32 || event.key === "Space") {
             event.preventDefault();
+          } else if (
+            "QWERTYUIOPASDFGHJKLZXCVBNM1234567890".includes(
+              event.key.toUpperCase()
+            )
+          ) {
+            if (element.value != "") {
+              element.nextElementSibling && element.nextElementSibling.focus();
+              element.nextElementSibling.value = event.key.toUpperCase();
+            } else {
+              event.preventDefault();
+              element.value = event.key.toUpperCase();
+              element.nextElementSibling && element.nextElementSibling.focus();
+            }
           }
-        });
-        element.addEventListener("input", function () {
-          if (element.value) {
-            element.nextElementSibling && element.nextElementSibling.focus();
+          const elements = document.querySelectorAll("[data-btn]");
+          var code = "";
+
+          elements.forEach((element) => {
+            code += element.value;
+          });
+          console.log(code)
+          if (code.length == 0) {
+            document.getElementById("submit_id").innerHTML = "Create Room";
+            document.getElementById("submit_id").disabled = false;
+            document
+              .getElementById("submit_id")
+              .classList.remove("bg-slate-800/25");
+          } else if (code.length == 4) {
+            document.getElementById("submit_id").innerHTML = "Join Room";
+            document.getElementById("submit_id").disabled = false;
+            document
+              .getElementById("submit_id")
+              .classList.remove("bg-slate-800/25");
+          } else {
+            document.getElementById("submit_id").innerHTML = "Join Room";
+            document.getElementById("submit_id").disabled = true;
+            document
+              .getElementById("submit_id")
+              .classList.add("bg-slate-800/25");
           }
         });
       });
@@ -197,13 +233,6 @@
         socket.onopen = function (event) {
           console.log("Connected to the WebSocket server");
         };
-
-        document.getElementById("join").addEventListener("click", function () {
-          socket.send(
-            JSON.stringify({ room: document.getElementById("room_id").value })
-          );
-          document.getElementById("room_id").value = "";
-        });
         function iOS() {
           return (
             [
@@ -218,19 +247,23 @@
             (navigator.userAgent.includes("Mac") && "ontouchend" in document)
           );
         }
-
         if (iOS()) {
           var ios_enable = document.getElementById("ios_enable");
-          ios_enable.style = "display:initial";
+          var code_div = document.getElementById("code_div");
+          ios_enable.classList.remove("hidden");
+          code_div.classList.add("pointer-events-none")
+          code_div.classList.add("opacity-50")
           ios_enable.addEventListener("click", function () {
             DeviceOrientationEvent.requestPermission()
               .then((response) => {
-                ios_enable.style = "display:none";
                 if (response === "granted") {
+                  ios_enable.classList.add("hidden");
+                  code_div.classList.remove("pointer-events-none")
+                  code_div.classList.remove("opacity-50")
                   window.addEventListener("deviceorientation", direction, true);
                 } else {
-                  document.getElementById("location").innerHTML =
-                    "Hey, you didn't give me permission :<";
+                  document.getElementById("ios_enable_text").innerHTML =
+                    "Hey, you didn't give me permission :< (Reload required)";
                 }
               })
               .catch(
@@ -242,7 +275,6 @@
         } else {
           window.addEventListener("deviceorientation", direction, true);
         }
-
         const options = {
           enableHighAccuracy: true,
           timeout: 5000,
@@ -291,6 +323,10 @@
           msg = JSON.parse(msg.data);
           if (msg.bearing) {
             bearing = msg.bearing;
+          } 
+          if (msg.error) {
+            document.getElementById("error_div").classList.remove("hidden");
+            document.getElementById("error_text").innerHTML = msg.error
           }
         };
         function error(err) {
