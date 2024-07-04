@@ -27,127 +27,144 @@
     <div
       class="flex flex-col h-dvh bg-[url('https://cdn.glitch.global/da55ffba-491b-4656-86d2-8e7c2f4e1ba2/diamond-sunset%20(1).svg?v=1719909882027')]"
     >
-      
       <!-- Initial div -->
       <div class="h-full w-full" id="initial_div">
-      
-      <!-- Name -->
-      <div class="flex h-1/6 w-full justify-center shrink-0">
-        <h1
-          class="text-slate-200 text-center place-self-center text-6xl font-bold"
+        <!-- Name -->
+        <div class="flex h-1/6 w-full justify-center shrink-0">
+          <h1
+            class="text-slate-200 text-center place-self-center text-6xl font-bold"
+          >
+            FaceOff
+          </h1>
+        </div>
+
+        <!-- Main menu -->
+        <div
+          class="flex flex-col h-2/3 w-full bg-slate-200/25 justify-center gap-3"
         >
-          FaceOff
-        </h1>
-      </div>
-
-      <!-- Main menu -->
-      <div
-        class="flex flex-col h-2/3 w-full bg-slate-200/25 justify-center gap-3"
-      >
-        <!-- Error modal -->
-        <div class="flex h-1/4 w-full justify-center p-3 ">
-          <div class="flex h-full w-full rounded-lg bg-red-400/50 hidden justify-center items-center" id="error_div">
-            <p
-              class="text-2xl font-medium p-3 text-center"
-              id="error_text"
+          <!-- Error modal -->
+          <div class="flex h-1/4 w-full justify-center p-3">
+            <div
+              class="flex h-full w-full rounded-lg bg-red-400/50 hidden justify-center items-center"
+              id="error_div"
             >
-              
-            </p>
+              <p
+                class="text-2xl font-medium p-3 text-center"
+                id="error_text"
+              ></p>
+            </div>
+          </div>
+          <!-- Code and stuff  -->
+          <div
+            class="flex flex-col h-1/2 w-full justify-center gap-3"
+            id="code_div"
+          >
+            <!-- Code -->
+            <div
+              class="flex grid grid-cols-4 h-fit w-fill mx-3 gap-3 place-items-center"
+            >
+              <input
+                type="text"
+                maxlength="1"
+                pattern="[a-zA-Z0-9]"
+                class="w-full aspect-square text-7xl text-center rounded-lg font-bold uppercase bg-slate-200/50 text-slate-800"
+                data-btn="0"
+              />
+              <input
+                type="text"
+                maxlength="1"
+                pattern="[a-zA-Z0-9]"
+                class="w-full aspect-square text-7xl text-center rounded-lg font-bold uppercase bg-slate-200/50 text-slate-800"
+                data-btn="1"
+              />
+
+              <input
+                type="text"
+                maxlength="1"
+                pattern="[a-zA-Z0-9]"
+                class="w-full aspect-square text-7xl text-center rounded-lg font-bold uppercase bg-slate-200/50 text-slate-800"
+                data-btn="2"
+              />
+
+              <input
+                type="text"
+                maxlength="1"
+                pattern="[a-zA-Z0-9]"
+                class="w-full aspect-square text-7xl text-center rounded-lg font-bold uppercase bg-slate-200/50 text-slate-800"
+                data-btn="3"
+              />
+            </div>
+            <div
+              class="h-1/2 w-full flex flex-row gap-3 px-3 self-center align-center"
+            >
+              <button
+                id="clear_id"
+                class="w-1/2 h-full bg-slate-200/50 rounded-lg text-3xl font-medium p-3"
+                onclick="clearid()"
+              >
+                Clear
+              </button>
+              <button
+                id="submit_id"
+                class="w-1/2 h-full bg-slate-200/50 rounded-lg text-3xl font-medium p-3"
+                onclick="createRoom()"
+              >
+                Create Room
+              </button>
+            </div>
+          </div>
+
+          <!-- Enable ios -->
+          <div class="flex h-1/4 w-full justify-center p-3">
+            <div
+              class="flex h-full w-full rounded-lg bg-red-400/50 hidden justify-center"
+              id="ios_enable"
+            >
+              <p
+                class="text-2xl font-medium p-3 text-center"
+                id="ios_enable_text"
+              >
+                Please click this to give us location permissions
+              </p>
+            </div>
           </div>
         </div>
-        <!-- Code and stuff  -->
-        <div class="flex flex-col h-1/2 w-full justify-center gap-3 " id="code_div">
-          <!-- Code -->
-          <div
-            class="flex grid grid-cols-4 h-fit w-fill mx-3 gap-3 place-items-center"
-          >
-            <input
-              type="text"
-              maxlength="1"
-              pattern="[a-zA-Z0-9]"
-              class="w-full aspect-square text-7xl text-center rounded-lg font-bold uppercase bg-slate-200/50 text-slate-800"
-              data-btn="0"
-            />
-            <input
-              type="text"
-              maxlength="1"
-              pattern="[a-zA-Z0-9]"
-              class="w-full aspect-square text-7xl text-center rounded-lg font-bold uppercase bg-slate-200/50 text-slate-800"
-              data-btn="1"
-            />
 
-            <input
-              type="text"
-              maxlength="1"
-              pattern="[a-zA-Z0-9]"
-              class="w-full aspect-square text-7xl text-center rounded-lg font-bold uppercase bg-slate-200/50 text-slate-800"
-              data-btn="2"
-            />
-
-            <input
-              type="text"
-              maxlength="1"
-              pattern="[a-zA-Z0-9]"
-              class="w-full aspect-square text-7xl text-center rounded-lg font-bold uppercase bg-slate-200/50 text-slate-800"
-              data-btn="3"
-            />
-          </div>
-          <div
-            class="h-1/2 w-full flex flex-row gap-3 px-3 self-center align-center"
+        <!-- Credits -->
+        <div class="flex h-1/6 w-full justify-center">
+          <h1
+            class="text-slate-200 text-center place-self-center text-4xl font-bold"
           >
-            <button
-              id="clear_id"
-              class="w-1/2 h-full bg-slate-200/50 rounded-lg text-3xl font-medium p-3"
-              onclick="clearid()"
-            >
-              Clear
-            </button>
-            <button
-              id="submit_id"
-              class="w-1/2 h-full bg-slate-200/50 rounded-lg text-3xl font-medium p-3"
-              onclick="createRoom()"
-            >
-              Create Room
-            </button>
-          </div>
-        </div>
-
-        <!-- Enable ios -->
-        <div class="flex h-1/4 w-full justify-center p-3">
-          <div
-            class="flex h-full w-full rounded-lg bg-red-400/50 hidden justify-center "
-            id="ios_enable"
-          >
-            <p
-              class="text-2xl font-medium p-3 text-center"
-              id="ios_enable_text"
-            >
-              Please click this to give us location permissions
-            </p>
-          </div>
+            From Kyra With Love &lt;3
+          </h1>
         </div>
       </div>
 
-      <!-- Credits -->
-      <div class="flex h-1/6 w-full justify-center	">
-        <h1
-          class="text-slate-200 text-center place-self-center text-4xl font-bold"
-        >
-          From Kyra With Love &lt;3
-        </h1>
-      </div>
-          
-      </div>
-      
       <!-- Location div -->
-      <div class=" h-full w-full hidden" id="location_div">
-        <div class="flex flex-col w-full h-1/6 bg-slate-200/25 justify-center items-center" id="copy_code">
-          <h1 class="text-slate-200 text-center place-self-center text-6xl font-bold" id="code_text">
+      <div class="h-full w-full hidden" id="location_div">
+        <div
+          class="flex flex-col w-full h-1/6 bg-slate-200/25 justify-center items-center"
+          id="copy_code"
+        >
+          <h1
+            class="text-slate-200 text-center place-self-center text-6xl font-bold"
+            id="code_text"
+          >
             #1234
           </h1>
-          <p class="text-slate-300 text-center place-self-center text-1xl font-medium">
+          <p
+            class="text-slate-300 text-center place-self-center text-1xl font-medium"
+            id="copy_text"
+          >
             Click to Copy
           </p>
+        </div>
+        <div class="flex flex-col w-full h-5/6">
+          <!-- Partner -->
+          <div class="flex flex-col w-full h-1/2 bg-slate-800/50"></div>
+
+          <!-- You -->
+          <div class="flex flex-col w-full h-1/2"></div>
         </div>
       </div>
     </div>
@@ -157,6 +174,13 @@
       var latitude;
       var longitude;
       var bearing;
+
+      var ua = navigator.userAgent.toLowerCase();
+      var isAndroid = ua.indexOf("android") > -1;
+      if (isAndroid) {
+        document.getElementById("error_div").classList.remove("hidden");
+            document.getElementById("error_text").innerHTML = "Browser unsupported (except for snessy): Do not report bugs";
+      }
 
       // Functions for initial page
       function clearid() {
@@ -186,7 +210,6 @@
             var letter = letters[Math.floor(Math.random() * letters.length)];
             code += letter;
             elements[i].value = letter;
-            
           }
           socket.send(JSON.stringify({ room: code }));
         }
@@ -219,6 +242,8 @@
               element.value = event.key.toUpperCase();
               element.nextElementSibling && element.nextElementSibling.focus();
             }
+          } else {
+            event.preventDefault();
           }
           const elements = document.querySelectorAll("[data-btn]");
           var code = "";
@@ -226,7 +251,6 @@
           elements.forEach((element) => {
             code += element.value;
           });
-          console.log(code)
           if (code.length == 0) {
             document.getElementById("submit_id").innerHTML = "Create Room";
             document.getElementById("submit_id").disabled = false;
@@ -248,7 +272,23 @@
           }
         });
       });
-      document.getElementById()
+      document
+        .getElementById("copy_code")
+        .addEventListener("click", function () {
+          async function copyCode() {
+            try {
+              await navigator.clipboard.writeText(
+                document.getElementById("code_text").innerHTML.substring(1)
+              );
+              document.getElementById("copy_text").innerHTML = "Copied!";
+            } catch (err) {
+              document.getElementById("copy_text").innerHTML =
+                "Something went wrong... Copy it yourself :<";
+              console.log(err);
+            }
+          }
+          copyCode();
+        });
       socket.addEventListener("open", (event) => {
         socket.onopen = function (event) {
           console.log("Connected to the WebSocket server");
@@ -271,15 +311,15 @@
           var ios_enable = document.getElementById("ios_enable");
           var code_div = document.getElementById("code_div");
           ios_enable.classList.remove("hidden");
-          code_div.classList.add("pointer-events-none")
-          code_div.classList.add("opacity-50")
+          code_div.classList.add("pointer-events-none");
+          code_div.classList.add("opacity-50");
           ios_enable.addEventListener("click", function () {
             DeviceOrientationEvent.requestPermission()
               .then((response) => {
                 if (response === "granted") {
                   ios_enable.classList.add("hidden");
-                  code_div.classList.remove("pointer-events-none")
-                  code_div.classList.remove("opacity-50")
+                  code_div.classList.remove("pointer-events-none");
+                  code_div.classList.remove("opacity-50");
                   window.addEventListener("deviceorientation", direction, true);
                 } else {
                   document.getElementById("ios_enable_text").innerHTML =
@@ -288,8 +328,7 @@
               })
               .catch(
                 () =>
-                  (document.getElementById("location").innerHTML =
-                    "Your device sucks lmao")
+                  (console.log("ur device slow lol"))
               );
           });
         } else {
@@ -334,15 +373,15 @@
           msg = JSON.parse(msg.data);
           if (msg.bearing) {
             bearing = msg.bearing;
-          } 
+          }
           if (msg.error) {
             document.getElementById("error_div").classList.remove("hidden");
-            document.getElementById("error_text").innerHTML = msg.error
+            document.getElementById("error_text").innerHTML = msg.error;
           }
           if (msg.success == true) {
             document.getElementById("initial_div").classList.add("hidden");
             document.getElementById("location_div").classList.remove("hidden");
-            document.getElementById("code_text").innerHTML = "#"+msg.code
+            document.getElementById("code_text").innerHTML = "#" + msg.code;
           }
         };
         function error(err) {
