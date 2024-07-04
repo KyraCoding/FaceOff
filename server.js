@@ -66,7 +66,7 @@ wss.on("connection", function (socket, request, pathname) {
         rooms.set(msg.room, room);
         socket.room = msg.room;
         console.log(`New user added to room \"${msg.room}\"`);
-        socket.send(JSON.stringify({ success: true }));
+        socket.send(JSON.stringify({ success: true, code: msg.room }));
         } else {
           socket.send(JSON.stringify({ success: false, error: "Room full!" }));
         }

@@ -27,9 +27,12 @@
     <div
       class="flex flex-col h-dvh bg-[url('https://cdn.glitch.global/da55ffba-491b-4656-86d2-8e7c2f4e1ba2/diamond-sunset%20(1).svg?v=1719909882027')]"
     >
-      <p id="location" class="hidden"></p>
+      
+      <!-- Initial div -->
+      <div class="h-full w-full" id="initial_div">
+      
       <!-- Name -->
-      <div class="flex h-1/6 w-full justify-center">
+      <div class="flex h-1/6 w-full justify-center shrink-0">
         <h1
           class="text-slate-200 text-center place-self-center text-6xl font-bold"
         >
@@ -39,11 +42,11 @@
 
       <!-- Main menu -->
       <div
-        class="flex flex-col h-2/3 w-full bg-slate-200/25 justify-center gap-3 "
+        class="flex flex-col h-2/3 w-full bg-slate-200/25 justify-center gap-3"
       >
         <!-- Error modal -->
         <div class="flex h-1/4 w-full justify-center p-3 ">
-          <div class="flex h-full w-full rounded-lg bg-red-200/50 hidden justify-center items-center" id="error_div">
+          <div class="flex h-full w-full rounded-lg bg-red-400/50 hidden justify-center items-center" id="error_div">
             <p
               class="text-2xl font-medium p-3 text-center"
               id="error_text"
@@ -112,7 +115,7 @@
         <!-- Enable ios -->
         <div class="flex h-1/4 w-full justify-center p-3">
           <div
-            class="flex h-full w-full rounded-lg bg-red-200/50 hidden justify-center items-center"
+            class="flex h-full w-full rounded-lg bg-red-400/50 hidden justify-center "
             id="ios_enable"
           >
             <p
@@ -126,12 +129,26 @@
       </div>
 
       <!-- Credits -->
-      <div class="flex h-1/6 w-full justify-center">
+      <div class="flex h-1/6 w-full justify-center	">
         <h1
           class="text-slate-200 text-center place-self-center text-4xl font-bold"
         >
           From Kyra With Love &lt;3
         </h1>
+      </div>
+          
+      </div>
+      
+      <!-- Location div -->
+      <div class=" h-full w-full hidden" id="location_div">
+        <div class="flex flex-col w-full h-1/6 bg-slate-200/25 justify-center items-center" id="copy_code">
+          <h1 class="text-slate-200 text-center place-self-center text-6xl font-bold" id="code_text">
+            #1234
+          </h1>
+          <p class="text-slate-300 text-center place-self-center text-1xl font-medium">
+            Click to Copy
+          </p>
+        </div>
       </div>
     </div>
     <script>
@@ -166,7 +183,10 @@
           const letters = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
           code = "";
           for (let i = 0; i < 4; i++) {
-            code += letters[Math.floor(Math.random() * letters.length)];
+            var letter = letters[Math.floor(Math.random() * letters.length)];
+            code += letter;
+            elements[i].value = letter;
+            
           }
           socket.send(JSON.stringify({ room: code }));
         }
@@ -228,7 +248,7 @@
           }
         });
       });
-
+      document.getElementById()
       socket.addEventListener("open", (event) => {
         socket.onopen = function (event) {
           console.log("Connected to the WebSocket server");
@@ -286,9 +306,6 @@
         function direction(event) {
           if (event.alpha !== null) {
             heading = event.webkitCompassHeading || Math.abs(event.alpha - 360);
-            document.getElementById(
-              "location"
-            ).innerHTML = `Your heading: ${heading} <br>Your latitude: ${latitude}<br>Your longitude: ${longitude}`;
             socket.send(
               JSON.stringify({
                 position: {
@@ -298,17 +315,11 @@
                 },
               })
             );
-            document.getElementById("bearing").innerHTML = `Bearing: ${
-              (bearing - heading + 360) % 360
-            }`;
           }
         }
         function coordinates(event) {
           latitude = event.coords.latitude;
           longitude = event.coords.longitude;
-          document.getElementById(
-            "location"
-          ).innerHTML = `Your heading: ${heading} <br>Your latitude: ${latitude}<br>Your longitude: ${longitude}`;
           socket.send(
             JSON.stringify({
               position: {
@@ -327,6 +338,11 @@
           if (msg.error) {
             document.getElementById("error_div").classList.remove("hidden");
             document.getElementById("error_text").innerHTML = msg.error
+          }
+          if (msg.success == true) {
+            document.getElementById("initial_div").classList.add("hidden");
+            document.getElementById("location_div").classList.remove("hidden");
+            document.getElementById("code_text").innerHTML = "#"+msg.code
           }
         };
         function error(err) {
