@@ -161,10 +161,28 @@
         </div>
         <div class="flex flex-col w-full h-5/6">
           <!-- Partner -->
-          <div class="flex flex-col w-full h-1/2 bg-slate-800/50"></div>
+          <div class="flex flex-col w-full h-1/2 bg-slate-800/25">
+            <!-- Not connected -->
+            <div
+              class="flex flex-col w-full h-full justify-center items-center"
+              id="no_partner"
+            >
+              <h1
+                class="text-slate-300 text-center place-self-center text-4xl animate-pulse font-bold"
+              >
+                Waiting for partner...
+              </h1>
+            </div>
+            <!-- Connected! -->
+            <div id="has_partner" class="flex flex-col w-full h-full justify-center items-center hidden">
+              <img id="partner_arrow" class="aspect-square h-full" src="https://cdn.glitch.global/da55ffba-491b-4656-86d2-8e7c2f4e1ba2/azurearrow?v=1720058043518">
+          </div> 
+          </div>
 
           <!-- You -->
-          <div class="flex flex-col w-full h-1/2"></div>
+          <div class="flex flex-col w-full h-1/2 justify-center items-center">
+            <img id="user_arrow" class="aspect-square h-full animate-pulse" src="https://cdn.glitch.global/da55ffba-491b-4656-86d2-8e7c2f4e1ba2/magentaarrow?v=1720058155733">
+          </div>
         </div>
       </div>
     </div>
@@ -179,7 +197,8 @@
       var isAndroid = ua.indexOf("android") > -1;
       if (isAndroid) {
         document.getElementById("error_div").classList.remove("hidden");
-            document.getElementById("error_text").innerHTML = "Browser unsupported (except for snessy): Do not report bugs";
+        document.getElementById("error_text").innerHTML =
+          "Browser unsupported: Do not report bugs";
       }
 
       // Functions for initial page
@@ -326,10 +345,7 @@
                     "Hey, you didn't give me permission :< (Reload required)";
                 }
               })
-              .catch(
-                () =>
-                  (console.log("ur device slow lol"))
-              );
+              .catch(() => console.log("ur device slow lol"));
           });
         } else {
           window.addEventListener("deviceorientation", direction, true);
@@ -383,6 +399,25 @@
             document.getElementById("location_div").classList.remove("hidden");
             document.getElementById("code_text").innerHTML = "#" + msg.code;
           }
+          if (msg.has_partner == true) {
+            document.getElementById("no_partner").classList.add("hidden");
+            document.getElementById("has_partner").classList.remove("hidden");
+            document.getElementById("user_arrow").classList.remove("animate-pulse");
+            
+            if (msg.user_bearing) {
+              document.getElementById("user_arrow").style.transform = `rotate(${msg.user_bearing}deg)`;
+            }
+            if (Math.abs(360-msg.user_bearing) < 20) {
+              document.getElementById("user_arrow").src = "https://cdn.glitch.global/da55ffba-491b-4656-86d2-8e7c2f4e1ba2/greenarrow?v=1720058081095"
+            }
+            if (msg.partner_bearing) {
+              document.getElementById("partner_arrow").style.transform = `rotate(${180 - msg.partner_bearing}deg)`;
+            }
+            if (Math.abs(360-msg.partner_bearing) < 20) {
+              document.getElementById("partner_bearing").src = "https://cdn.glitch.global/da55ffba-491b-4656-86d2-8e7c2f4e1ba2/greenarrow?v=1720058081095"
+            }
+          }
+          
         };
         function error(err) {
           console.log(err);

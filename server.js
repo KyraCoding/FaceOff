@@ -40,7 +40,7 @@ function calculateBearing(lat1, long1, lat2, long2) {
 
   brng = toDegrees(brng);
   brng = (brng + 360) % 360;
-
+brng = 360 - brng;
   return brng;
 }
 
@@ -95,14 +95,27 @@ wss.on("connection", function (socket, request, pathname) {
             !!partner.position?.latitude &&
             !!partner.position?.longitude
           ) {
-            partner_socket.send(
-              JSON.stringify({
-                bearing: calculateBearing(
+            
+            // How much the user needs to turn 
+            var user_bearing = (calculateBearing(
                   partner.position.latitude,
                   partner.position.longitude,
                   user.position.latitude,
                   user.position.longitude
-                ),
+                )-partner.position.heading +360)%360
+            // How much the partner needs to turn
+            var partner_bearing = (calculateBearing(
+                  user.position.latitude,
+                  user.position.longitude,
+                  partner.position.latitude,
+                  partner.position.longitude
+                )-user.position.heading +360)%360
+            console.log(user_bearing);
+            partner_socket.send(
+              JSON.stringify({
+                user_bearing: user_bearing,
+                partner_bearing: partner_bearing,
+                has_partner: true
               })
             );
           }
