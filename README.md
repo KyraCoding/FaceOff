@@ -1,5 +1,7 @@
 # FaceOff
 
+![image](https://i.ibb.co/Vpw5qwd/image.png)
+
 ## What is FaceOff?
 This project was based off the idea that no matter how far apart two people are, they can look at the same moon (unless timezones)
 We can do better though. FaceOff allows two people to use their phones and see if they are facing each other. An arrow on screen will prompt them with any adjustments they need to make.
